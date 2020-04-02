@@ -32,10 +32,17 @@
           <label for="image_link">Image URL</label>
           {{ form.image_link(class_ = 'form-control', placeholder='http://', autofocus = true) }}
         </div>
-
       <div class="form-group">
           <label for="facebook_link">Facebook Link</label>
           {{ form.facebook_link(class_ = 'form-control', placeholder='http://', autofocus = true) }}
+        </div>
+      <div class="form-group">
+          <label for="seeking_venue">Are you seeking venue?</label>
+          {{ form.seeking_venue(class_ = 'form-control', autofocus = true, default = false) }}
+        </div>
+      <div class="form-group">
+          <label for="seeking_description">Seeking Venue Description</label>
+          {{ form.seeking_description(class_ = 'form-control', placeholder='We are looking for a place to play twice a week', autofocus = true, default = false) }}
         </div>
       <input type="submit" value="Create Venue" class="btn btn-primary btn-lg btn-block">
     </form>
