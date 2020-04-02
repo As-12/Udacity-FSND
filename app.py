@@ -41,6 +41,7 @@ migrate = Migrate(app, db)
 @dataclass
 class Venue(db.Model):
     __tablename__ = 'Venue'
+    __table_args__ = (db.UniqueConstraint('name', 'city', 'state'),)
     id: int = db.Column(db.Integer, primary_key=True)
     name: str = db.Column(db.String, nullable=False)
     city: str = db.Column(db.String(120), nullable=False)
@@ -64,7 +65,7 @@ class Venue(db.Model):
 class Artist(db.Model):
     __tablename__ = 'Artist'
     id: int = db.Column(db.Integer, primary_key=True)
-    name: str = db.Column(db.String, nullable=False)
+    name: str = db.Column(db.String, nullable=False, unique=True)
     city: str = db.Column(db.String(120), nullable=False)
     state: str = db.Column(db.String(120), nullable=False)
     phone: str = db.Column(db.String(120), nullable=True)
