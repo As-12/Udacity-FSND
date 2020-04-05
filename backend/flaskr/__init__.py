@@ -33,7 +33,7 @@ def create_app(test_config=None):
     # Allowing all origins to access api
 
     # setup flask-RESTX
-    api = Api(app)
+    api = Api(app, version=1.0, title="Trivia API", description="API for Udacity trivia application")
 
     category_ns = api.namespace('categories', description='Category operations')
     question_ns = api.namespace('questions', description='Question operations')
@@ -148,7 +148,6 @@ def create_app(test_config=None):
             parser.add_argument('page', type=int, help='Page cannot be converted', default=1)
             args = parser.parse_args()
             page = args['page']
-            print(args)
             start_index, end_index = self._page_index(page, questions)
 
             response = {
@@ -181,6 +180,9 @@ def create_app(test_config=None):
                 code = 422
                 message = "The specified category is not valid"
                 db.session.rollback()
+            except:
+                code = 400
+                message = "The request data format is not valid"
             finally:
                 db.session.close()
             if (code != 201):
@@ -283,14 +285,16 @@ def create_app(test_config=None):
         @question_ns.expect(search_model)
         def post(self):
             '''Search for question based on term all questions'''
+            try:
+                questions = Question.query.filter(Question.question.ilike(f"%{api.payload['searchTerm']}%")).all()
 
-            questions = Question.query.filter(Question.question.ilike(f"%{api.payload['searchTerm']}%")).all()
-
-            response = {
-                "questions": questions,
-                "count": len(questions)
-            }
-            return response
+                response = {
+                    "questions": questions,
+                    "count": len(questions)
+                }
+                return response
+            except:
+                abort(400, "The search request data not valid")
 
     @question_ns.route('/filter')
     class QuestionFilter(Resource):
@@ -302,17 +306,22 @@ def create_app(test_config=None):
                                              f'making GET request to the category resource endpoint'})
         def get(self):
             '''List all questions'''
-            parser = reqparse.RequestParser()
-            parser.add_argument('category', type=int, default=1)
-            args = parser.parse_args()
-            category_id = args['category']
-            questions = Question.query.filter(Question.category == category_id).all()
+            try:
+                parser = reqparse.RequestParser()
+                parser.add_argument('category', type=int, default=1)
+                args = parser.parse_args()
+                category_id = args['category']
+                questions = Question.query.filter(Question.category == category_id).all()
 
-            response = {
-                "questions": questions,
-                "count": len(questions)
-            }
-            return response
+                response = {
+                    "questions": questions,
+                    "count": len(questions)
+                }
+                return response
+            except:
+                abort(400, "invalid category parameter format")
+
+
 
     '''
   @TODO: 
