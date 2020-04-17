@@ -1,7 +1,6 @@
 venv
 .idea
 .pytest_cache
-env_file
 .DS_Store
 __pycache__
 env
